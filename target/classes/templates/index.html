@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:lang="${bookLanguage != null ? bookLanguage : 'ar'}"
+      th:dir="${bookLanguage != null && bookLanguage == 'en' ? 'ltr' : 'rtl'}"
+      lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Assistant Lite - AI Book Analysis</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <h1>Book Assistant Lite</h1>
+                </div>
+                <div class="book-status" th:if="${hasBook}">
+                    <span class="status-dot"></span>
+                    <span class="status-text" th:text="${bookLanguage == 'ar' ? 'كتاب عربي محمّل' : 'English Book Loaded'}">كتاب محمّل</span>
+                    <span class="lang-badge" th:text="${bookLanguage == 'ar' ? 'عربي' : 'English'}">عربي</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Upload Section -->
+        <section class="upload-section card" th:classappend="${hasBook} ? 'has-book' : ''">
+            <div class="upload-header">
+                <h2>
+                    <span class="icon">📤</span>
+                    <span th:text="${hasBook} ? (${bookLanguage == 'ar' ? 'الكتاب محمّل' : 'Book Loaded'}) : 'رفع الكتاب'">رفع الكتاب</span>
+                </h2>
+                <p class="subtitle" th:text="${hasBook} ? (${bookLanguage == 'ar' ? 'يمكنك الآن استخدام أدوات التحليل' : 'You can now use analysis tools'}) : 'PDF حتى 200MB'">PDF حتى 200MB</p>
+            </div>
+
+            <form th:action="@{/upload}" method="post" enctype="multipart/form-data" class="upload-form">
+                <div class="drop-zone" id="dropZone">
+                    <input type="file" name="file" accept="application/pdf" id="fileInput" required>
+                    <div class="drop-zone-content">
+                        <div class="drop-icon">📄</div>
+                        <p class="drop-text" th:text="${hasBook} ? (${bookLanguage == 'ar' ? 'اضغط لتغيير الملف' : 'Click to change file'}) : 'اضغط لاختيار ملف PDF أو اسحبه هنا'">اضغط لاختيار ملف PDF أو اسحبه هنا</p>
+                        <p class="drop-subtext">PDF حتى 200MB</p>
+                        <div class="file-info" th:if="${hasBook}">
+                            <span class="file-icon">✅</span>
+                            <span th:text="${bookLanguage == 'ar' ? 'تم التعرف على اللغة: العربية' : 'Language detected: English'}">تم التعرف على اللغة: العربية</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" th:text="${hasBook} ? (${bookLanguage == 'ar' ? 'إعادة الرفع' : 'Re-upload'}) : 'رفع'">رفع</button>
+            </form>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span class="alert-icon">⚠️</span>
+                <span th:text="${error}">خطأ في رفع الملف</span>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span class="alert-icon">✅</span>
+                <span th:text="${success}">تم الرفع بنجاح</span>
+            </div>
+        </section>
+
+        <!-- Language Settings - Only shown when book is loaded -->
+        <section class="lang-section card" th:if="${hasBook}">
+            <div class="lang-header">
+                <h3>
+                    <span class="icon">🌐</span>
+                    <span th:text="${bookLanguage == 'ar' ? 'إعدادات اللغة' : 'Language Settings'}">إعدادات اللغة</span>
+                </h3>
+            </div>
+            <div class="lang-controls">
+                <div class="lang-option">
+                    <label th:text="${bookLanguage == 'ar' ? 'لغة الكتاب المكتشفة' : 'Detected Book Language'}">لغة الكتاب المكتشفة</label>
+                    <span class="lang-badge" th:text="${bookLanguage == 'ar' ? 'العربية' : 'English'}">العربية</span>
+                </div>
+                <div class="lang-option">
+                    <label th:text="${bookLanguage == 'ar' ? 'لغة الإجابة' : 'Output Language'}">لغة الإجابة</label>
+                    <select name="outputLanguage" id="outputLanguage" class="lang-select">
+                        <option value="ar" th:selected="${bookLanguage == 'ar' || bookLanguage == null}">العربية</option>
+                        <option value="en" th:selected="${bookLanguage == 'en'}">English</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Tools Accordion - Only shown when book is loaded -->
+        <div class="accordion-container" th:if="${hasBook}">
+            
+            <!-- Group 1: Summary -->
+            <div class="accordion-group" data-group="summary">
+                <div class="accordion-header" onclick="toggleAccordion('summary')">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">📖</span>
+                        <h3 th:text="${bookLanguage == 'ar' ? 'الملخصات' : 'Summaries'}">الملخصات</h3>
+                    </div>
+                    <span class="accordion-arrow" id="arrow-summary">▼</span>
+                </div>
+                <div class="accordion-content" id="content-summary">
+                    <!-- General Summary -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>📖 <span th:text="${bookLanguage == 'ar' ? 'ملخص عام' : 'General Summary'}">ملخص عام</span></h4>
+                        </div>
+                        <form th:action="@{/summary/general}" method="post" onsubmit="handleSubmit(this, 'summaryGeneral')">
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'توليد ملخص' : 'Generate Summary'}">توليد ملخص</span>
+                            </button>
+                        </form>
+                        <div class="result-container" id="result-summaryGeneral">
+                            <div class="chat-message" th:if="${summaryGeneral}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${summaryGeneral}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${summaryGeneral}" th:text="${bookLanguage == 'ar' ? 'اضغط على الزر لتوليد ملخص' : 'Click button to generate summary'}">اضغط على الزر لتوليد ملخص</p>
+                        </div>
+                    </div>
+
+                    <!-- Pages Summary -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>📄 <span th:text="${bookLanguage == 'ar' ? 'ملخص صفحات مختارة' : 'Selected Pages Summary'}">ملخص صفحات مختارة</span></h4>
+                        </div>
+                        <form th:action="@{/summary/pages}" method="post" onsubmit="handleSubmit(this, 'summaryPages')">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'من صفحة' : 'From Page'}">من صفحة</label>
+                                    <input type="number" name="startPage" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'إلى صفحة' : 'To Page'}">إلى صفحة</label>
+                                    <input type="number" name="endPage" min="1" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'تلخيص' : 'Summarize'}">تلخيص</button>
+                        </form>
+                        <div class="result-container" id="result-summaryPages">
+                            <div class="chat-message" th:if="${summaryPages}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${summaryPages}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${summaryPages}" th:text="${bookLanguage == 'ar' ? 'أدخل نطاق الصفحات واضغط تلخيص' : 'Enter page range and click Summarize'}">أدخل نطاق الصفحات واضغط تلخيص</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Group 2: Analysis -->
+            <div class="accordion-group" data-group="analysis">
+                <div class="accordion-header" onclick="toggleAccordion('analysis')">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">🔬</span>
+                        <h3 th:text="${bookLanguage == 'ar' ? 'التحليل' : 'Analysis'}">التحليل</h3>
+                    </div>
+                    <span class="accordion-arrow" id="arrow-analysis">▼</span>
+                </div>
+                <div class="accordion-content" id="content-analysis">
+                    <!-- Reality Check -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>✅ <span th:text="${bookLanguage == 'ar' ? 'فحص الواقعية' : 'Reality Check'}">فحص الواقعية</span></h4>
+                        </div>
+                        <form th:action="@{/reality-check}" method="post" onsubmit="handleSubmit(this, 'realityCheck')">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'من صفحة' : 'From Page'}">من صفحة</label>
+                                    <input type="number" name="startPage" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'إلى صفحة' : 'To Page'}">إلى صفحة</label>
+                                    <input type="number" name="endPage" min="1" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'فحص' : 'Check'}">فحص</span>
+                            </button>
+                        </form>
+                        <div class="result-container" id="result-realityCheck">
+                            <div class="chat-message" th:if="${realityCheck}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${realityCheck}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${realityCheck}" th:text="${bookLanguage == 'ar' ? 'أدخل نطاق الصفحات واضغط فحص' : 'Enter page range and click Check'}">أدخل نطاق الصفحات واضغط فحص</p>
+                        </div>
+                    </div>
+
+                    <!-- Concept Map -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>🗺️ <span th:text="${bookLanguage == 'ar' ? 'خريطة المفاهيم' : 'Concept Map'}">خريطة المفاهيم</span></h4>
+                        </div>
+                        <form th:action="@{/concept-map}" method="post" onsubmit="handleSubmit(this, 'conceptMap')">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'من صفحة' : 'From Page'}">من صفحة</label>
+                                    <input type="number" name="startPage" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'إلى صفحة' : 'To Page'}">إلى صفحة</label>
+                                    <input type="number" name="endPage" min="1" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'توليد خريطة' : 'Generate Map'}">توليد خريطة</span>
+                            </button>
+                        </form>
+                        <div class="result-container" id="result-conceptMap">
+                            <div class="chat-message" th:if="${conceptMap}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${conceptMap}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${conceptMap}" th:text="${bookLanguage == 'ar' ? 'أدخل نطاق الصفحات واضغط توليد خريطة' : 'Enter page range and click Generate Map'}">أدخل نطاق الصفحات واضغط توليد خريطة</p>
+                        </div>
+                    </div>
+
+                    <!-- Risk Flags -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>⚠️ <span th:text="${bookLanguage == 'ar' ? 'تنبيهات المخاطر' : 'Risk Flags'}">تنبيهات المخاطر</span></h4>
+                        </div>
+                        <form th:action="@{/risk-flags}" method="post" onsubmit="handleSubmit(this, 'riskFlags')">
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'استخراج التنبيهات' : 'Extract Flags'}">استخراج التنبيهات</span>
+                            </button>
+                        </form>
+                        <div class="result-container" id="result-riskFlags">
+                            <div class="chat-message" th:if="${riskFlags}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${riskFlags}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${riskFlags}" th:text="${bookLanguage == 'ar' ? 'اضغط لاستخراج تنبيهات المخاطر' : 'Click to extract risk flags'}">اضغط لاستخراج تنبيهات المخاطر</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Group 3: Interactive -->
+            <div class="accordion-group" data-group="interactive">
+                <div class="accordion-header" onclick="toggleAccordion('interactive')">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">💬</span>
+                        <h3 th:text="${bookLanguage == 'ar' ? 'التفاعل' : 'Interactive'}">التفاعل</h3>
+                    </div>
+                    <span class="accordion-arrow" id="arrow-interactive">▼</span>
+                </div>
+                <div class="accordion-content" id="content-interactive">
+                    <!-- Action Plan -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>📋 <span th:text="${bookLanguage == 'ar' ? 'الخطة التنفيذية' : 'Action Plan'}">الخطة التنفيذية</span></h4>
+                        </div>
+                        <form th:action="@{/action-plan}" method="post" onsubmit="handleSubmit(this, 'actionPlan')">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'من صفحة' : 'From Page'}">من صفحة</label>
+                                    <input type="number" name="startPage" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'إلى صفحة' : 'To Page'}">إلى صفحة</label>
+                                    <input type="number" name="endPage" min="1" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'توليد خطة' : 'Generate Plan'}">توليد خطة</span>
+                            </button>
+                        </form>
+                        <div class="result-container" id="result-actionPlan">
+                            <div class="chat-message" th:if="${actionPlan}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${actionPlan}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${actionPlan}" th:text="${bookLanguage == 'ar' ? 'أدخل نطاق الصفحات واضغط توليد خطة' : 'Enter page range and click Generate Plan'}">أدخل نطاق الصفحات واضغط توليد خطة</p>
+                        </div>
+                    </div>
+
+                    <!-- Semantic Search -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>🔍 <span th:text="${bookLanguage == 'ar' ? 'بحث دلالي' : 'Semantic Search'}">بحث دلالي</span></h4>
+                        </div>
+                        <form th:action="@{/semantic-search}" method="post" onsubmit="handleSubmit(this, 'semanticSearch')">
+                            <div class="form-row">
+                                <div class="form-group form-group-full">
+                                    <label th:text="${bookLanguage == 'ar' ? 'ما الذي تبحث عنه؟' : 'What are you looking for?'}">ما الذي تبحث عنه؟</label>
+                                    <input type="text" name="query" required th:placeholder="${bookLanguage == 'ar' ? 'اكتب بحثك هنا...' : 'Type your search...'}">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'بحث' : 'Search'}">بحث</span>
+                            </button>
+                        </form>
+                        <div class="result-container" id="result-semanticSearch">
+                            <div class="chat-message" th:if="${semanticSearch}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${semanticSearch}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${semanticSearch}" th:text="${bookLanguage == 'ar' ? 'اكتب سؤالك واضغط بحث' : 'Type your query and click Search'}">اكتب سؤالك واضغط بحث</p>
+                        </div>
+                    </div>
+
+                    <!-- Q&A -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>❓ <span th:text="${bookLanguage == 'ar' ? 'سؤال وجواب' : 'Question & Answer'}">سؤال وجواب</span></h4>
+                        </div>
+                        <form th:action="@{/qa}" method="post" onsubmit="handleSubmit(this, 'qa')">
+                            <div class="form-row">
+                                <div class="form-group form-group-full">
+                                    <label th:text="${bookLanguage == 'ar' ? 'اسأل من الكتاب' : 'Ask about the book'}">اسأل من الكتاب</label>
+                                    <input type="text" name="question" required th:placeholder="${bookLanguage == 'ar' ? 'اكتب سؤالك هنا...' : 'Type your question...'}">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'إرسال' : 'Send'}">إرسال</span>
+                            </button>
+                        </form>
+                        <div class="result-container" id="result-qa">
+                            <div class="chat-message" th:if="${qa}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${qa}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${qa}" th:text="${bookLanguage == 'ar' ? 'اكتب سؤالك واضغط إرسال' : 'Type your question and click Send'}">اكتب سؤالك واضغط إرسال</p>
+                        </div>
+                    </div>
+
+                    <!-- Comprehension Test -->
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <h4>📝 <span th:text="${bookLanguage == 'ar' ? 'اختبار الفهم' : 'Comprehension Test'}">اختبار الفهم</span></h4>
+                        </div>
+                        <form th:action="@{/comprehension}" method="post" onsubmit="handleSubmit(this, 'comprehension')">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'من صفحة' : 'From Page'}">من صفحة</label>
+                                    <input type="number" name="startPage" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label th:text="${bookLanguage == 'ar' ? 'إلى صفحة' : 'To Page'}">إلى صفحة</label>
+                                    <input type="number" name="endPage" min="1" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-tool">
+                                <span th:text="${bookLanguage == 'ar' ? 'توليد اختبار' : 'Generate Test'}">توليد اختبار</span>
+                            </button>
+                        </form>
+                        <div class="result-container" id="result-comprehension">
+                            <div class="chat-message" th:if="${comprehension}">
+                                <div class="message-content markdown-body"></div>
+                                <div class="raw-content" th:text="${comprehension}" style="display: none;"></div>
+                            </div>
+                            <p class="no-result" th:unless="${comprehension}" th:text="${bookLanguage == 'ar' ? 'أدخل نطاق الصفحات واضغط توليد اختبار' : 'Enter page range and click Generate Test'}">أدخل نطاق الصفحات واضغط توليد اختبار</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p th:text="${bookLanguage == 'ar' ? 'Book Assistant Lite - مدعوم بالذكاء الاصطناعي' : 'Book Assistant Lite - AI Powered'}">Book Assistant Lite - مدعوم بالذكاء الاصطناعي</p>
+        </div>
+    </footer>
+
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Highlight.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script>
+        // Configure marked.js
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            }
+        });
+
+        // Custom renderer for code blocks with copy button
+        const renderer = new marked.Renderer();
+        renderer.code = function(code, language) {
+            const validLang = language || 'plaintext';
+            const escapedCode = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+            
+            return `
+<div class="code-block-wrapper">
+    <div class="code-block-header">
+        <span class="code-language">${validLang}</span>
+        <button class="copy-code-btn" onclick="copyCode(this)" title="Copy code">
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span class="copy-text">Copy</span>
+        </button>
+    </div>
+    <pre class="code-block"><code class="language-${validLang}">${escapedCode}</code></pre>
+</div>`;
+        };
+
+        marked.use({ renderer });
+
+        // Copy code function
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block-wrapper').querySelector('code');
+            const codeText = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                const copyText = button.querySelector('.copy-text');
+                const originalText = copyText.textContent;
+                copyText.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyText.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        // Render markdown in result containers
+        function renderMarkdownResults() {
+            const resultContainers = document.querySelectorAll('.result-container');
+            
+            resultContainers.forEach(container => {
+                const chatMessage = container.querySelector('.chat-message');
+                if (chatMessage) {
+                    const messageContent = chatMessage.querySelector('.message-content');
+                    const rawContentDiv = chatMessage.querySelector('.raw-content');
+                    const rawContent = rawContentDiv ? rawContentDiv.textContent : '';
+                    
+                    if (rawContent && messageContent) {
+                        // Parse markdown and render
+                        messageContent.innerHTML = marked.parse(rawContent);
+                        
+                        // Apply syntax highlighting to any code blocks
+                        messageContent.querySelectorAll('pre code').forEach((block) => {
+                            hljs.highlightElement(block);
+                        });
+                    }
+                }
+            });
+        }
+
+        // Accordion toggle function
+        function toggleAccordion(group) {
+            const content = document.getElementById('content-' + group);
+            const arrow = document.getElementById('arrow-' + group);
+            const groupEl = document.querySelector('[data-group="' + group + '"]');
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                arrow.style.transform = 'rotate(0deg)';
+                groupEl.classList.remove('active');
+            } else {
+                content.classList.add('active');
+                arrow.style.transform = 'rotate(180deg)';
+                groupEl.classList.add('active');
+            }
+        }
+
+        // Form submission handler
+        function handleSubmit(form, resultId) {
+            // Add output language hidden input
+            const langSelect = document.getElementById('outputLanguage');
+            if (langSelect) {
+                let hiddenInput = form.querySelector('input[name="outputLanguage"]');
+                if (!hiddenInput) {
+                    hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'outputLanguage';
+                    form.appendChild(hiddenInput);
+                }
+                hiddenInput.value = langSelect.value;
+            }
+
+            // Show loading state
+            const button = form.querySelector('button[type="submit"]');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="spinner"></span> <span>جاري المعالجة...</span>';
+            button.disabled = true;
+            form.classList.add('loading');
+
+            // Reset after timeout
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                form.classList.remove('loading');
+            }, 300000);
+        }
+
+        // Auto-expand accordion with results on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Render markdown in all result containers
+            renderMarkdownResults();
+            
+            const results = ['summaryGeneral', 'summaryPages', 'realityCheck', 'conceptMap', 'riskFlags', 'actionPlan', 'semanticSearch', 'qa', 'comprehension'];
+            
+            for (let i = results.length - 1; i >= 0; i--) {
+                const resultId = results[i];
+                const resultEl = document.getElementById('result-' + resultId);
+                if (resultEl) {
+                    const chatMessage = resultEl.querySelector('.chat-message');
+                    if (chatMessage) {
+                        const rawContentDiv = chatMessage.querySelector('.raw-content');
+                        const rawContent = rawContentDiv ? rawContentDiv.textContent.trim() : '';
+                        
+                        if (rawContent) {
+                            // Find parent accordion group
+                            const toolCard = resultEl.closest('.tool-card');
+                            const accordionContent = toolCard.closest('.accordion-content');
+                            const accordionGroup = accordionContent.parentElement;
+
+                            // Expand this group
+                            const groupId = accordionGroup.dataset.group;
+                            const content = document.getElementById('content-' + groupId);
+                            const arrow = document.getElementById('arrow-' + groupId);
+
+                            content.classList.add('active');
+                            arrow.style.transform = 'rotate(180deg)';
+                            accordionGroup.classList.add('active');
+
+                            // Scroll to result
+                            setTimeout(() => {
+                                resultEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                resultEl.classList.add('highlight');
+                            }, 500);
+
+                            break; // Only expand the first (most recent) result
+                        }
+                    }
+                }
+            }
+
+            // Default: expand first accordion
+            const firstAccordion = document.querySelector('.accordion-group');
+            if (firstAccordion) {
+                const groupId = firstAccordion.dataset.group;
+                const content = document.getElementById('content-' + groupId);
+                const arrow = document.getElementById('arrow-' + groupId);
+                content.classList.add('active');
+                arrow.style.transform = 'rotate(180deg)';
+                firstAccordion.classList.add('active');
+            }
+        });
+
+        // Drag and drop functionality
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        if (dropZone && fileInput) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    fileInput.files = files;
+                }
+            });
+
+            dropZone.addEventListener('click', () => fileInput.click());
+        }
+    </script>
+</body>
+</html>

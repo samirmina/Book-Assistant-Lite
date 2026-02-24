@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)http://localhost:8081/summary/general -->
+<html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Book Assistant Lite</title>
+    <link rel="stylesheet" href="./Book Assistant Lite_files/f.txt">
+    <style>
+        .form-group {
+            display: contents;
+        }
+        .form-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-left: 0.25rem;
+        }
+        .lang-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: #1f2937;
+            border-radius: 0.5rem;
+        }
+        .lang-selector select {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #374151;
+            border-radius: 0.4rem;
+            background: #111827;
+            color: #e5e7eb;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .lang-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            background: #2563eb;
+            color: white;
+        }
+    </style>
+<style>/* red-hat-display-latin-ext-400-normal */
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(assets/red-hat-display-latin-ext-400-normal.woff2) format('woff2'), url(assets/red-hat-display-latin-ext-400-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* red-hat-display-latin-400-normal */
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(assets/red-hat-display-latin-400-normal.woff2) format('woff2'), url(assets/red-hat-display-latin-400-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}</style><style>.copilot-toast-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;background-color:rgba(0, 0, 0, 0.7);z-index:99998}.copilot-toast{position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);background:#fff;padding:24px;width:640px;max-width:95%;border-radius:24px;box-shadow:0 8px 24px rgba(0, 0, 0, 0.2);z-index:99999;font-family:"Red Hat Display",sans-serif}.copilot-toast-wrapper{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}.copilot-toast-left{flex:1 1 50%}.copilot-toast-heading{font-size:20px;margin-bottom:40px;font-weight:bold}.copilot-toast-para{font-size:14px;margin-bottom:10px;color:#444}.copilot-toast-title{font-size:18px;font-weight:600;margin-bottom:10px}.copilot-toast-image{width:180px;height:auto;border-radius:8px;flex:1 1 40%}.copilot-toast-button{background-color:#4314b6;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-size:14px;margin-top:20px;cursor:pointer;display:block;margin-left:auto;margin-right:auto}.copilot-toast-button:hover{background-color:#8a61ee}.jc-loading-wrapper{position:fixed;top:0;right:0;width:50vw;height:100vh;background:#fff;border-left:1px solid #ddd;z-index:999999999;display:flex;align-items:center;justify-content:center}.jc-loading-title{font-size:26px;font-weight:600;margin-bottom:30px}.jc-spinner{width:70px;height:70px;border:8px solid #e4dfff;border-top-color:#8a61ee;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:25px}@keyframes spin{to{transform:rotate(360deg)}}.jc-loading-steps{font-size:16px;color:#666;text-align:center;line-height:1.6}</style><style>@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:300;src:url(assets/red-hat-display-latin-ext-300-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-ext-300-normal.woff) format("woff");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:300;src:url(assets/red-hat-display-latin-300-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-300-normal.woff) format("woff");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style><style>@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:400;src:url(assets/red-hat-display-latin-ext-400-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-ext-400-normal.woff) format("woff");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:400;src:url(assets/red-hat-display-latin-400-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-400-normal.woff) format("woff");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style><style>@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:500;src:url(assets/red-hat-display-latin-ext-500-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-ext-500-normal.woff) format("woff");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:500;src:url(assets/red-hat-display-latin-500-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-500-normal.woff) format("woff");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style><style>@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:600;src:url(assets/red-hat-display-latin-ext-600-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-ext-600-normal.woff) format("woff");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:600;src:url(assets/red-hat-display-latin-600-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-600-normal.woff) format("woff");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style><style>@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:700;src:url(assets/red-hat-display-latin-ext-700-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-ext-700-normal.woff) format("woff");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:"Red Hat Display";font-style:normal;font-display:swap;font-weight:700;src:url(assets/red-hat-display-latin-700-normal.woff2) format("woff2"),url(assets/red-hat-display-latin-700-normal.woff) format("woff");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style></head>
+<body>
+<div class="container">
+    <h1>Book Assistant Lite</h1>
+
+    <section class="card">
+        <h2>رفع الكتاب (PDF حتى 200MB)</h2>
+        <form action="http://localhost:8081/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="application/pdf" required="">
+            <button type="submit">رفع</button>
+        </form>
+        
+        
+        <p class="success">✓ تم تحميل كتاب في الجلسة الحالية.</p>
+    </section>
+
+    <section class="card">
+        <div class="lang-selector">
+            <span>لغة الإجابة / Output Language:</span>
+            <select name="outputLanguage" id="outputLanguage">
+                <option value="ar">العربية</option>
+                <option value="en" selected="selected">English</option>
+            </select>
+            <span class="lang-badge">English Book</span>
+        </div>
+    </section>
+
+    <section class="grid">
+        <div class="card">
+            <h3>ملخص عام</h3>
+            <form action="http://localhost:8081/summary/general" method="post" onsubmit="handleSubmit(this)">
+                <button type="submit">توليد ملخص</button>
+            </form>
+            <pre>**Book Summary:**
+
+"Spring Start Here" by Laurentiu Spilcă is a comprehensive guide aimed at Java developers seeking to learn the Spring framework from the ground up. It emphasizes understanding the core concepts of Spring—such as the Spring context (for managing object instances) and aspects (for intercepting method calls)—before moving on to building real-world applications. The book walks the reader through using Spring for web development (Spring MVC, Spring Boot), data persistence (Spring Data), RESTful communication, transactions, security (mentioned as upcoming), and testing.
+
+Rather than delving into theory alone, the book takes a hands-on approach, guiding readers through building projects that mirror common scenarios: backend services, test automation apps, and even touching on desktop and mobile use cases. It highlights best practices like dependency injection and the use of Spring Boot to reduce boilerplate code and simplify configuration.
+
+Key takeaways for developers:
+1.  **Foundation Focus:** Master the fundamentals of Spring contexts and aspects—they are the backbone of how Spring works.
+2.  **Practical Approach:** The book prioritizes learning by doing, with concrete examples and projects.
+3.  **Real-World Skills:** Covers essential areas like web apps, REST services, data persistence, and testing.
+4.  **Modern Development:** Emphasizes using Spring Boot for convention-over-configuration.
+5.  **Structured Learning:** Designed as a stepping stone to more advanced Spring topics and the wider Spring ecosystem.
+
+Overall, the book positions itself as the essential first step for Java developers wanting to effectively use the Spring framework in modern application development.</pre>
+        </div>
+
+        <div class="card">
+            <h3>ملخص صفحات مختارة</h3>
+            <form action="http://localhost:8081/summary/pages" method="post" onsubmit="handleSubmit(this)">
+                <span class="form-label">من صفحة</span>
+                <input type="number" name="startPage" min="1" required="">
+                <span class="form-label">إلى صفحة</span>
+                <input type="number" name="endPage" min="1" required="">
+                <button type="submit">تلخيص</button>
+            </form>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>فحص الواقعية</h3>
+            <form action="http://localhost:8081/reality-check" method="post" onsubmit="handleSubmit(this)">
+                <span class="form-label">من صفحة</span>
+                <input type="number" name="startPage" min="1" required="">
+                <span class="form-label">إلى صفحة</span>
+                <input type="number" name="endPage" min="1" required="">
+                <button type="submit">فحص</button>
+            </form>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>خريطة المفاهيم</h3>
+            <form action="http://localhost:8081/concept-map" method="post" onsubmit="handleSubmit(this)">
+                <span class="form-label">من صفحة</span>
+                <input type="number" name="startPage" min="1" required="">
+                <span class="form-label">إلى صفحة</span>
+                <input type="number" name="endPage" min="1" required="">
+                <button type="submit">توليد خريطة</button>
+            </form>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>تنبيهات المخاطر</h3>
+            <form action="http://localhost:8081/risk-flags" method="post" onsubmit="handleSubmit(this)">
+                <button type="submit">استخراج التنبيهات</button>
+            </form>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>الخطة التنفيذية</h3>
+            <form action="http://localhost:8081/action-plan" method="post" onsubmit="handleSubmit(this)">
+                <span class="form-label">من صفحة</span>
+                <input type="number" name="startPage" min="1" required="">
+                <span class="form-label">إلى صفحة</span>
+                <input type="number" name="endPage" min="1" required="">
+                <button type="submit">توليد خطة</button>
+            </form>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>بحث دلالي</h3>
+            <form action="http://localhost:8081/semantic-search" method="post" onsubmit="handleSubmit(this)">
+                <input type="text" name="query" placeholder="ما الذي تبحث عنه؟" required="">
+                <button type="submit">بحث</button>
+            </form>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>سؤال وجواب</h3>
+            <form action="http://localhost:8081/qa" method="post" onsubmit="handleSubmit(this)">
+                <input type="text" name="question" placeholder="اسأل من الكتاب" required="">
+                <button type="submit">إرسال</button>
+            </form>
+            <pre></pre>
+        </div>
+
+        <div class="card">
+            <h3>اختبار الفهم</h3>
+            <form action="http://localhost:8081/comprehension" method="post" onsubmit="handleSubmit(this)">
+                <span class="form-label">من صفحة</span>
+                <input type="number" name="startPage" min="1" required="">
+                <span class="form-label">إلى صفحة</span>
+                <input type="number" name="endPage" min="1" required="">
+                <button type="submit">توليد اختبار</button>
+            </form>
+            <pre></pre>
+        </div>
+    </section>
+</div>
+
+<script>
+function handleSubmit(form) {
+    // Add output language hidden input
+    const langSelect = document.getElementById('outputLanguage');
+    if (langSelect) {
+        let hiddenInput = form.querySelector('input[name="outputLanguage"]');
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'outputLanguage';
+            form.appendChild(hiddenInput);
+        }
+        hiddenInput.value = langSelect.value;
+    }
+
+    const button = form.querySelector('button[type="submit"]');
+    const originalText = button.textContent;
+    button.textContent = 'جاري المعالجة...';
+    button.disabled = true;
+    form.classList.add('loading');
+
+    // Allow form submission to proceed
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+        form.classList.remove('loading');
+    }, 300000); // Reset after 5 minutes timeout
+}
+</script>
+
+
+
+<div><div></div></div><deepl-input-controller translate="no"><template shadowrootmode="open"><link rel="stylesheet" href="chrome-extension://fancfknaplihpclbhbpclnmmjcjanbaf/build/content.css"><div dir="ltr" style="visibility: initial !important;"><div class="dl-input-translation-container svelte-95aucy"><div></div></div></div></template></deepl-input-controller></body></html>
