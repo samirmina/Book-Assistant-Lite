@@ -12,7 +12,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZCGNRQLMXK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ZCGNRQLMXK');
+    </script>
+
     <!-- Highlight.js for syntax highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     
@@ -27,6 +36,10 @@
                     <span class="logo-icon">📚</span>
                     <h1>Book Assistant Lite</h1>
                 </div>
+                <nav class="main-nav">
+                    <a th:href="@{/contact}" class="nav-link" th:text="${bookLanguage == 'ar' ? 'اتصل بنا' : 'Contact'}">اتصل بنا</a>
+                    <a th:href="@{/logout}" class="nav-link nav-link-logout" th:text="${bookLanguage == 'ar' ? 'تسجيل خروج' : 'Logout'}">تسجيل خروج</a>
+                </nav>
                 <div class="book-status" th:if="${hasBook}">
                     <span class="status-dot"></span>
                     <span class="status-text" th:text="${bookLanguage == 'ar' ? 'كتاب عربي محمّل' : 'English Book Loaded'}">كتاب محمّل</span>
@@ -36,6 +49,7 @@
         </div>
     </header>
 
+    <a href="/about.html">About</a>
     <div class="container">
         <!-- Upload Section -->
         <section class="upload-section card" th:classappend="${hasBook} ? 'has-book' : ''">
@@ -374,7 +388,11 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p th:text="${bookLanguage == 'ar' ? 'Book Assistant Lite - مدعوم بالذكاء الاصطناعي' : 'Book Assistant Lite - AI Powered'}">Book Assistant Lite - مدعوم بالذكاء الاصطناعي</p>
+            <p>
+                <span th:text="${bookLanguage == 'ar' ? 'Book Assistant Lite - مدعوم بالذكاء الاصطناعي' : 'Book Assistant Lite - AI Powered'}">Book Assistant Lite - مدعوم بالذكاء الاصطناعي</span>
+                <span class="footer-separator">•</span>
+                <a th:href="@{/about}" th:text="${bookLanguage == 'ar' ? 'حول' : 'About'}">About</a>
+            </p>
         </div>
     </footer>
 

@@ -17,9 +17,17 @@ public class AuthController {
     @GetMapping("/login")
     public String loginPage(@RequestParam(required = false) String error,
                             @RequestParam(required = false) String logout,
+                            @RequestParam(required = false) String registered,
                             Model model) {
-        if (error != null) model.addAttribute("error", "اسم المستخدم أو كلمة المرور غلط");
-        if (logout != null) model.addAttribute("message", "تم تسجيل الخروج بنجاح");
+        if (error != null) {
+            model.addAttribute("error", "اسم المستخدم أو كلمة المرور غير صحيحة");
+        }
+        if (logout != null) {
+            model.addAttribute("message", "تم تسجيل الخروج بنجاح");
+        }
+        if (registered != null) {
+            model.addAttribute("message", "تم إنشاء الحساب بنجاح! يرجى تسجيل الدخول");
+        }
         return "login";
     }
 

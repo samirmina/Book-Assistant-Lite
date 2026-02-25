@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Assistant Lite - AI Book Analysis</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZCGNRQLMXK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ZCGNRQLMXK');
+    </script>
+
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <style>
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 5rem 0 3rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(15, 23, 42, 0.3));
+            border-radius: var(--radius-xl);
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.03) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--accent-primary), #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-md);
+            font-weight: 700;
+        }
+
+        .hero .tagline {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero .tagline-ar {
+            font-size: 1.4rem;
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all var(--transition-fast);
+            box-shadow: 0 4px 20px var(--accent-glow);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .cta-icon {
+            font-size: 1.3rem;
+        }
+
+        /* Features Section */
+        .features-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-normal);
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-6px);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: 3rem;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .step {
+            text-align: center;
+            padding: var(--spacing-lg);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
+            border-radius: 50%;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .step h4 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .step p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Footer Links */
+        .footer-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-md);
+        }
+
+        .footer-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-nav a:hover {
+            color: var(--accent-primary);
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 3rem 0 2rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero .tagline {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <h1>Book Assistant Lite</h1>
+                </div>
+                <nav class="main-nav">
+                    <a th:href="@{/home}" class="nav-link">الرئيسية</a>
+                    <a th:href="@{/about}" class="nav-link">حول</a>
+                    <a th:href="@{/login}" class="nav-link">تسجيل الدخول</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 2rem;">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Book Assistant Lite</h1>
+                <p class="tagline tagline-ar">حلّل كتب PDF بالذكاء الاصطناعي - استخرج الملخصات، أجب على الأسئلة، وطوّر فهمك</p>
+                <p class="tagline">AI-Powered PDF Book Analysis - Summaries, Q&A, and Deep Insights</p>
+                <a th:href="@{/app}" class="cta-button">
+                    <span class="cta-icon">🚀</span>
+                    <span>ابدأ الآن / Get Started</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title">
+                <span>✨</span>
+                <span>المميزات / Features</span>
+            </h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">📖</span>
+                    <h3>الملخصات / Summaries</h3>
+                    <p>توليد ملخصات عامة أو لصفحات مختارة من الكتاب بشكل تلقائي وسريع</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🔬</span>
+                    <h3>التحليل / Analysis</h3>
+                    <p>فحص الواقعية، خريطة المفاهيم، وتنبيهات المخاطر لتحليل عميق</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">💬</span>
+                    <h3>سؤال وجواب / Q&A</h3>
+                    <p>اسأل أي سؤال عن محتوى الكتاب واحصل على إجابة دقيقة فوراً</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🔍</span>
+                    <h3>البحث الدلالي / Semantic Search</h3>
+                    <p>ابحث عن المفاهيم والمواضيع داخل الكتاب بذكاء وفهم السياق</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">📝</span>
+                    <h3>اختبار الفهم / Comprehension Test</h3>
+                    <p>توليد اختبارات فهم لقياس استيعابك للمحتوى وتحسين التعلم</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">📋</span>
+                    <h3>الخطة التنفيذية / Action Plan</h3>
+                    <p>استخراج خطوات عملية قابلة للتطبيق من المحتوى مباشرة</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-it-works">
+            <h2 class="section-title">
+                <span>🛠️</span>
+                <span>كيف يعمل / How It Works</span>
+            </h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>ارفع الكتاب / Upload Book</h4>
+                    <p>ارفع ملف PDF حتى 200MB وسيتم التعرف على اللغة تلقائياً</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>اختر الأداة / Choose Tool</h4>
+                    <p>اختر من بين أدوات التحليل المختلفة حسب احتياجك</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>احصل على النتيجة / Get Results</h4>
+                    <p>احصل على تحليل شامل ودقيق بالذكاء الاصطناعي فوراً</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <div style="text-align: center; margin: 3rem 0;">
+            <a th:href="@{/app}" class="cta-button">
+                <span class="cta-icon">📚</span>
+                <span>ابدأ التحليل الآن / Start Analyzing</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>
+                <span>Book Assistant Lite - مدعوم بالذكاء الاصطناعي / AI Powered</span>
+            </p>
+            <nav class="footer-nav">
+                <a th:href="@{/home}">الرئيسية / Home</a>
+                <a th:href="@{/about}">حول / About</a>
+                <a th:href="@{/login}">تسجيل الدخول / Login</a>
+            </nav>
+        </div>
+    </footer>
+</body>
+</html>

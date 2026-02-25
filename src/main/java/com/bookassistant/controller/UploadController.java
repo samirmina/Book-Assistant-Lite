@@ -4,7 +4,6 @@ import com.bookassistant.service.FileParserService;
 import com.bookassistant.session.BookSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,12 +19,6 @@ public class UploadController {
     public UploadController(FileParserService fileParserService, BookSession bookSession) {
         this.fileParserService = fileParserService;
         this.bookSession = bookSession;
-    }
-
-    @GetMapping
-    public String index(Model model) {
-        model.addAttribute("hasBook", bookSession.getBook().isPresent());
-        return "index";
     }
 
     @PostMapping("/upload")

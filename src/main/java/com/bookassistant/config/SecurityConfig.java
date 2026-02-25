@@ -31,12 +31,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/css/**", "/js/**", "/about", "/contact", "/feedback").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/", "/home", "/about", "/login", "/register", "/forgot-password", "/css/**", "/js/**", "/styles.css", "/contact", "/feedback", "/app").permitAll()
+                .requestMatchers("/upload/**", "/summary/**", "/qa", "/search/**", "/comprehension", "/plan/**", "/analysis/**").authenticated()
+                .anyRequest().permitAll()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/app", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
